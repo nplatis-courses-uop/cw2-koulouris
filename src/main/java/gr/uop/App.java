@@ -104,23 +104,23 @@ public class App extends Application {
         toLeft.setOnAction((e)->{
             ObservableList<String> toMove = right.getSelectionModel().getSelectedItems();
             if(left.getItems().isEmpty()){
-
+                left.getItems().add(0, toMove.get(0));
             }
-            else{
-                for(String item: toMove){
-                    int startingIndex = startingList.indexOf(item);
-                    for(String leftItem: left.getItems()){
-                        if(startingIndex < startingList.indexOf(leftItem)){
-                            left.getItems().add(left.getItems().indexOf(leftItem), item);
-                            break;
-                        }
-                    }
-                    if(!left.getItems().contains(item)){//add it to the end
-                        left.getItems().add(left.getItems().size(), item);
+            for(String item: toMove){
+                if(left.getItems().contains(item)){
+                    continue;
+                }
+                int startingIndex = startingList.indexOf(item);
+                for(String leftItem: left.getItems()){
+                    if(startingIndex < startingList.indexOf(leftItem)){
+                        left.getItems().add(left.getItems().indexOf(leftItem), item);
+                        break;
                     }
                 }
+                if(!left.getItems().contains(item)){//add it to the end
+                    left.getItems().add(left.getItems().size(), item);
+                }
             }
-           
 
             temp.getItems().clear();
             temp.getItems().addAll(left.getItems());
