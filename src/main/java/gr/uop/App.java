@@ -103,15 +103,25 @@ public class App extends Application {
         });
         toLeft.setOnAction((e)->{
             ObservableList<String> toMove = right.getSelectionModel().getSelectedItems();
-            for(String item: toMove){
-                int startingIndex = startingList.indexOf(item);
-                for(String leftItem: left.getItems()){
-                    if(startingIndex < startingList.indexOf(leftItem)){
-                        left.getItems().add(left.getItems().indexOf(leftItem), item);
-                        break;
+            if(left.getItems().isEmpty()){
+
+            }
+            else{
+                for(String item: toMove){
+                    int startingIndex = startingList.indexOf(item);
+                    for(String leftItem: left.getItems()){
+                        if(startingIndex < startingList.indexOf(leftItem)){
+                            left.getItems().add(left.getItems().indexOf(leftItem), item);
+                            break;
+                        }
+                    }
+                    if(!left.getItems().contains(item)){//add it to the end
+                        left.getItems().add(left.getItems().size(), item);
                     }
                 }
             }
+           
+
             temp.getItems().clear();
             temp.getItems().addAll(left.getItems());
             right.getItems().removeAll(toMove);
@@ -160,28 +170,34 @@ public class App extends Application {
         });
 
   
-/*
-        toRight.setDisable(left.getItems().isEmpty());
-        left.getItems().addListener(new ListChangeListener<String>() {
-            @Override
-            public void onChanged(Change<? extends String> c) {
+        left.getItems().addListener((ListChangeListener<String>) change-> {
+            while(change.next()){
                 toRight.setDisable(left.getItems().isEmpty());
             }
         });
-
-        toLeft.setDisable(right.getItems().isEmpty());
-        Up.setDisable(right.getItems().isEmpty() || (right.getItems().size() == 1) || right.getSelectionModel().getSelectedIndices().contains(0));
-        Down.setDisable(right.getItems().isEmpty() || (right.getItems().size() == 1) || right.getSelectionModel().getSelectedIndices().contains(right.getItems().size()-1));
-        right.getItems().addListener(new ListChangeListener<String>() {
-            @Override
-            public void onChanged(Change<? extends String> c) {
+       
+        right.getItems().addListener((ListChangeListener<String>) change-> {
+            while(change.next()){//look for next changes
                 toLeft.setDisable(right.getItems().isEmpty());
                 Up.setDisable(right.getItems().isEmpty() || (right.getItems().size() == 1));
                 Down.setDisable(right.getItems().isEmpty() || (right.getItems().size() == 1));
+            }
+        });
+        right.getSelectionModel().getSelectedItems().addListener((ListChangeListener<String>) c->{
+            while(c.next()){
                 Up.setDisable(right.getSelectionModel().getSelectedIndices().contains(0));
+            }
+        });
+        right.getSelectionModel().getSelectedItems().addListener((ListChangeListener<String>) c->{
+            while(c.next()){
                 Down.setDisable(right.getSelectionModel().getSelectedIndices().contains(right.getItems().size()-1));
             }
-        });*/
+        });
+
+        //initially, buttons for the right list are disabled
+        Up.setDisable(true);
+        Down.setDisable(true);
+        toLeft.setDisable(true);
         /***************/
 
         var scene = new Scene(mainPane, 640, 480);
