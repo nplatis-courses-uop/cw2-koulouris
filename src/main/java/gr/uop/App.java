@@ -109,6 +109,32 @@ public class App extends Application {
             }
             right.getItems().removeAll(toMove);
         });
+        Up.setOnAction((e)->{
+            ObservableList<String> toMove = right.getSelectionModel().getSelectedItems();
+            for(String item: toMove){
+                int index = right.getItems().indexOf(item);
+                if(index > 0){
+                    String temp = right.getItems().get(index-1);
+                    right.getItems().set(index-1, item);
+                    right.getItems().set(index, temp);
+                }
+            }
+           /* for(String item: toMove){
+                right.getSelectionModel().select(item);
+            }*/
+        });
+        Down.setOnAction((e)->{
+            ObservableList<String> toMove = right.getSelectionModel().getSelectedItems();
+            for(String item: toMove){
+                int index = right.getItems().indexOf(item);
+                if(index < right.getItems().size()-1){
+                    String temp = right.getItems().get(index+1);
+                    right.getItems().set(index+1, item);
+                    right.getItems().set(index, temp);
+                }
+            }
+        });
+        
         /***************/
 
         var scene = new Scene(mainPane, 640, 480);
