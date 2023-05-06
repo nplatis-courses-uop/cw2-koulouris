@@ -3,12 +3,13 @@ package gr.uop;
 import java.util.ArrayList;
 
 import javafx.application.Application;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
@@ -16,7 +17,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -36,6 +36,8 @@ public class App extends Application {
             startingList.add(left.getItems().get(i));
         }
         left.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        ListView<String> temp = new ListView<>();
+        temp.getItems().addAll(left.getItems());
 
         ListView<String> right = new ListView<>();
         right.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -52,6 +54,7 @@ public class App extends Application {
         ImageView downImageView = new ImageView(new Image(getClass().getResourceAsStream("images/down.png")));
         Down.setGraphic(downImageView);
         TextField filter = new TextField();
+        filter.setPrefColumnCount(20);
 
         VBox LeftBox = new VBox();
         LeftBox.getChildren().add(filter);
@@ -95,6 +98,8 @@ public class App extends Application {
             ObservableList<String> toMove = left.getSelectionModel().getSelectedItems();
             right.getItems().addAll(toMove);
             left.getItems().removeAll(toMove);
+            temp.getItems().clear();
+            temp.getItems().addAll(left.getItems());
         });
         toLeft.setOnAction((e)->{
             ObservableList<String> toMove = right.getSelectionModel().getSelectedItems();
@@ -107,6 +112,8 @@ public class App extends Application {
                     }
                 }
             }
+            temp.getItems().clear();
+            temp.getItems().addAll(left.getItems());
             right.getItems().removeAll(toMove);
         });
         Up.setOnAction((e)->{
@@ -114,9 +121,9 @@ public class App extends Application {
             for(String item: toMove){
                 int index = right.getItems().indexOf(item);
                 if(index > 0){
-                    String temp = right.getItems().get(index-1);
+                    String tmp = right.getItems().get(index-1);
                     right.getItems().set(index-1, item);
-                    right.getItems().set(index, temp);
+                    right.getItems().set(index, tmp);
                 }
             }
            /* for(String item: toMove){
@@ -128,13 +135,53 @@ public class App extends Application {
             for(String item: toMove){
                 int index = right.getItems().indexOf(item);
                 if(index < right.getItems().size()-1){
-                    String temp = right.getItems().get(index+1);
+                    String tmp = right.getItems().get(index+1);
                     right.getItems().set(index+1, item);
-                    right.getItems().set(index, temp);
+                    right.getItems().set(index, tmp);
                 }
             }
         });
-        
+       
+        filter.textProperty().addListener((observable, oldValue, newValue)->{
+            ListView<String> filteredList = new ListView<>();
+            for(String item: temp.getItems()){
+                if(item.contains(newValue)){
+                    filteredList.getItems().add(item);
+                }
+            }
+
+            left.getItems().clear();
+            if(newValue.isEmpty() || newValue.isBlank()){
+                left.getItems().addAll(temp.getItems());
+            }
+            else{
+                left.getItems().addAll(filteredList.getItems());
+            }
+        });
+
+  
+/*
+        toRight.setDisable(left.getItems().isEmpty());
+        left.getItems().addListener(new ListChangeListener<String>() {
+            @Override
+            public void onChanged(Change<? extends String> c) {
+                toRight.setDisable(left.getItems().isEmpty());
+            }
+        });
+
+        toLeft.setDisable(right.getItems().isEmpty());
+        Up.setDisable(right.getItems().isEmpty() || (right.getItems().size() == 1) || right.getSelectionModel().getSelectedIndices().contains(0));
+        Down.setDisable(right.getItems().isEmpty() || (right.getItems().size() == 1) || right.getSelectionModel().getSelectedIndices().contains(right.getItems().size()-1));
+        right.getItems().addListener(new ListChangeListener<String>() {
+            @Override
+            public void onChanged(Change<? extends String> c) {
+                toLeft.setDisable(right.getItems().isEmpty());
+                Up.setDisable(right.getItems().isEmpty() || (right.getItems().size() == 1));
+                Down.setDisable(right.getItems().isEmpty() || (right.getItems().size() == 1));
+                Up.setDisable(right.getSelectionModel().getSelectedIndices().contains(0));
+                Down.setDisable(right.getSelectionModel().getSelectedIndices().contains(right.getItems().size()-1));
+            }
+        });*/
         /***************/
 
         var scene = new Scene(mainPane, 640, 480);
