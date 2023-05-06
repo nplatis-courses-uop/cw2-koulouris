@@ -128,27 +128,36 @@ public class App extends Application {
         });
         Up.setOnAction((e)->{
             ObservableList<String> toMove = right.getSelectionModel().getSelectedItems();
+            ArrayList<String> toSelect = new ArrayList<>();
             for(String item: toMove){
                 int index = right.getItems().indexOf(item);
                 if(index > 0){
                     String tmp = right.getItems().get(index-1);
                     right.getItems().set(index-1, item);
                     right.getItems().set(index, tmp);
+                    toSelect.add(item);
                 }
             }
-           /* for(String item: toMove){
+            right.getSelectionModel().clearSelection();
+            for(String item:toSelect){
                 right.getSelectionModel().select(item);
-            }*/
+            }
         });
         Down.setOnAction((e)->{
             ObservableList<String> toMove = right.getSelectionModel().getSelectedItems();
+            ArrayList<String> toSelect = new ArrayList<>();
             for(String item: toMove){
                 int index = right.getItems().indexOf(item);
                 if(index < right.getItems().size()-1){
                     String tmp = right.getItems().get(index+1);
                     right.getItems().set(index+1, item);
                     right.getItems().set(index, tmp);
+                    toSelect.add(item);
                 }
+            }
+            right.getSelectionModel().clearSelection();
+            for(String item:toSelect){
+                right.getSelectionModel().select(item);
             }
         });
        
