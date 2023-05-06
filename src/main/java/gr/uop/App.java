@@ -1,6 +1,9 @@
 package gr.uop;
 
+import java.util.ArrayList;
+
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -27,13 +30,15 @@ public class App extends Application {
     public void start(Stage stage) {
 
         ListView<String> left = new ListView<>();
+        ArrayList<String> startingList = new ArrayList<>();
         for(int i = 0; i <= 30; i++){
             left.getItems().add("Item "+i);
+            startingList.add(left.getItems().get(i));
         }
         left.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         ListView<String> right = new ListView<>();
-        right.setMaxHeight(left.getMaxHeight());
+        right.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         Button toRight = new Button();
         Button toLeft = new Button();
         ImageView rightImageView = new ImageView(new Image(getClass().getResourceAsStream("images/right.png")));
@@ -82,6 +87,29 @@ public class App extends Application {
 
         BorderPane mainPane = new BorderPane();
         mainPane.setCenter(mainBox);
+
+
+
+        /*functionality*/
+        toRight.setOnAction((e)->{    
+            ObservableList<String> toMove = left.getSelectionModel().getSelectedItems();
+            right.getItems().addAll(toMove);
+            left.getItems().removeAll(toMove);
+        });
+        toLeft.setOnAction((e)->{
+            ObservableList<String> toMove = right.getSelectionModel().getSelectedItems();
+            for(String item: toMove){
+                int startingIndex = startingList.indexOf(item);
+                for(String leftItem: left.getItems()){
+                    if(startingIndex < startingList.indexOf(leftItem)){
+                        left.getItems().add(left.getItems().indexOf(leftItem), item);
+                        break;
+                    }
+                }
+            }
+            right.getItems().removeAll(toMove);
+        });
+        /***************/
 
         var scene = new Scene(mainPane, 640, 480);
         stage.setTitle("Lists");
