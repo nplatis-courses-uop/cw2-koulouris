@@ -68,3 +68,7 @@ buildNumber.properties
 
 # Built Visual Studio Code Extensions
 *.vsix
+
+
+#image files
+*.png
