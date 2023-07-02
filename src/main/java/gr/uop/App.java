@@ -1,11 +1,11 @@
 package gr.uop;
 
 import java.util.ArrayList;
+import java.util.ListIterator;
 
 import javafx.application.Application;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -66,14 +66,14 @@ public class App extends Application {
         VBox middleButtons = new VBox();
         middleButtons.getChildren().add(toRight);
         middleButtons.getChildren().add(toLeft);
-        middleButtons.setAlignment(Pos.BASELINE_CENTER);
+        middleButtons.setAlignment(Pos.CENTER);
         VBox.setVgrow(toRight, Priority.NEVER);
         VBox.setVgrow(toLeft, Priority.NEVER);
 
         VBox rightListButtons = new VBox();
         rightListButtons.getChildren().add(Up);
         rightListButtons.getChildren().add(Down);
-        rightListButtons.setAlignment(Pos.BASELINE_CENTER);
+        rightListButtons.setAlignment(Pos.CENTER);
         VBox.setVgrow(Up, Priority.NEVER);
         VBox.setVgrow(Down, Priority.NEVER);
 
@@ -84,13 +84,10 @@ public class App extends Application {
         mainBox.getChildren().add(rightListButtons);
         mainBox.setSpacing(10);
         mainBox.setAlignment(Pos.CENTER);
-        mainBox.setPadding(new Insets(10, 10, 50, 10));
-        middleButtons.setAlignment(Pos.CENTER);
-        rightListButtons.setAlignment(Pos.CENTER);        
+        mainBox.setPadding(new Insets(10, 10, 50, 10));       
 
         BorderPane mainPane = new BorderPane();
         mainPane.setCenter(mainBox);
-
 
 
         /*functionality*/
@@ -146,7 +143,9 @@ public class App extends Application {
         Down.setOnAction((e)->{
             ObservableList<String> toMove = right.getSelectionModel().getSelectedItems();
             ArrayList<String> toSelect = new ArrayList<>();
-            for(String item: toMove){
+            ListIterator<String> li = toMove.listIterator(toMove.size());
+            while(li.hasPrevious()){
+                String item = li.previous();
                 int index = right.getItems().indexOf(item);
                 if(index < right.getItems().size()-1){
                     String tmp = right.getItems().get(index+1);
